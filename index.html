@@ -1,0 +1,477 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Syllabus Tracker</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css" rel="stylesheet">
+    <style>
+        @import url('https://fonts.googleapis.com/css2?family=Inter:wght@300;400;600;700&display=swap');
+
+        body {
+            font-family: 'Inter', sans-serif;
+            background-color: #0f172a;
+            background-image: 
+                radial-gradient(at 0% 0%, hsla(253,16%,7%,1) 0, transparent 50%), 
+                radial-gradient(at 50% 0%, hsla(225,39%,30%,1) 0, transparent 50%), 
+                radial-gradient(at 100% 0%, hsla(339,49%,30%,1) 0, transparent 50%);
+            background-attachment: fixed;
+            background-size: cover;
+            color: #e2e8f0;
+            min-height: 100vh;
+        }
+
+        /* Glassmorphism Classes */
+        .glass-panel {
+            background: rgba(17, 25, 40, 0.6);
+            backdrop-filter: blur(16px);
+            -webkit-backdrop-filter: blur(16px);
+            border: 1px solid rgba(255, 255, 255, 0.08);
+        }
+        
+        .glass-card {
+            background: rgba(30, 41, 59, 0.4); 
+            backdrop-filter: blur(8px);
+            border: 1px solid rgba(255, 255, 255, 0.05);
+        }
+
+        /* Scrollbar Styling */
+        ::-webkit-scrollbar {
+            width: 4px; /* Thinner scrollbar */
+        }
+        ::-webkit-scrollbar-track {
+            background: rgba(0,0,0,0.1); 
+        }
+        ::-webkit-scrollbar-thumb {
+            background: rgba(56, 189, 248, 0.3); 
+            border-radius: 10px;
+        }
+        ::-webkit-scrollbar-thumb:hover {
+            background: rgba(56, 189, 248, 0.5); 
+        }
+
+        .chapter-item {
+            transition: all 0.3s ease;
+        }
+        
+        /* Animation for moving items */
+        .just-moved {
+            animation: slideDownFlash 0.6s ease-out;
+            z-index: 10;
+        }
+
+        @keyframes slideDownFlash {
+            0% { 
+                transform: translateY(20px); 
+                background-color: rgba(255, 255, 255, 0.1);
+                opacity: 0;
+            }
+            100% { 
+                transform: translateY(0); 
+                opacity: 1; 
+            }
+        }
+
+        .progress-bar-fill {
+            transition: width 0.6s cubic-bezier(0.4, 0, 0.2, 1);
+        }
+    </style>
+</head>
+<body class="p-2 md:p-4 overflow-x-hidden">
+
+    <!-- Header -->
+    <header class="mb-4 text-center">
+        <h1 class="text-2xl md:text-3xl font-bold text-transparent bg-clip-text bg-gradient-to-r from-blue-400 to-cyan-300 tracking-tight mb-1">
+            Syllabus Tracker
+        </h1>
+        <p class="text-slate-400 font-light text-xs">Click once for Attended (Blue), twice for Complete (Red)</p>
+    </header>
+
+    <!-- Main Grid -->
+    <div id="tracker-container" class="grid grid-cols-1 md:grid-cols-2 xl:grid-cols-4 gap-3 max-w-[1920px] mx-auto h-[calc(100vh-100px)]">
+        <!-- Subjects will be injected here via JS -->
+    </div>
+
+    <!-- Template for Subject Column (Hidden) -->
+    <template id="subject-template">
+        <div class="glass-panel rounded-xl p-3 flex flex-col h-full shadow-2xl shadow-black/40">
+            <!-- Subject Header -->
+            <div class="mb-3">
+                <div class="flex justify-between items-end mb-1">
+                    <h2 class="text-lg font-bold text-white subject-title">Subject Name</h2>
+                    <span class="text-[10px] font-mono text-cyan-400 subject-percent">0%</span>
+                </div>
+                <!-- Subject Progress Bar Container -->
+                <div class="w-full bg-slate-700/50 rounded-full h-1.5 overflow-hidden flex">
+                    <!-- Red Bar (Completed) -->
+                    <div class="subject-progress-red bg-red-500 h-1.5 progress-bar-fill" style="width: 0%"></div>
+                    <!-- Blue Bar (Attended) -->
+                    <div class="subject-progress-blue bg-cyan-400 h-1.5 progress-bar-fill" style="width: 0%"></div>
+                </div>
+            </div>
+
+            <!-- Papers Container -->
+            <div class="flex-1 grid grid-cols-2 gap-2 h-full overflow-hidden">
+                <!-- Paper 1 -->
+                <div class="flex flex-col h-full overflow-hidden">
+                    <div class="mb-2">
+                        <h3 class="text-[10px] font-semibold text-slate-300 uppercase tracking-wider mb-0.5">
+                            Paper 1 <span class="paper1-count text-cyan-400 ml-0.5">(0)</span>
+                        </h3>
+                        <div class="w-full bg-slate-700/30 rounded-full h-1 flex overflow-hidden">
+                            <div class="paper1-progress-red bg-red-500 h-1 progress-bar-fill" style="width: 0%"></div>
+                            <div class="paper1-progress-blue bg-cyan-500 h-1 progress-bar-fill" style="width: 0%"></div>
+                        </div>
+                    </div>
+                    <div class="paper1-list glass-card rounded-lg p-1.5 flex-1 overflow-y-auto space-y-1.5">
+                        <!-- Chapters go here -->
+                    </div>
+                </div>
+
+                <!-- Paper 2 -->
+                <div class="flex flex-col h-full overflow-hidden">
+                    <div class="mb-2">
+                        <h3 class="text-[10px] font-semibold text-slate-300 uppercase tracking-wider mb-0.5">
+                            Paper 2 <span class="paper2-count text-cyan-400 ml-0.5">(0)</span>
+                        </h3>
+                        <div class="w-full bg-slate-700/30 rounded-full h-1 flex overflow-hidden">
+                            <div class="paper2-progress-red bg-red-500 h-1 progress-bar-fill" style="width: 0%"></div>
+                            <div class="paper2-progress-blue bg-cyan-500 h-1 progress-bar-fill" style="width: 0%"></div>
+                        </div>
+                    </div>
+                    <div class="paper2-list glass-card rounded-lg p-1.5 flex-1 overflow-y-auto space-y-1.5">
+                        <!-- Chapters go here -->
+                    </div>
+                </div>
+            </div>
+        </div>
+    </template>
+
+    <script>
+        // --- DATA DEFINITIONS ---
+        // Updated with user provided Bengali Syllabus
+        
+        const higher_math_first = [
+            "ম্যাট্রিক্স ও নির্ণায়ক", 
+            "ভেক্টর", 
+            "সরলরেখা", 
+            "বৃত্ত", 
+            "বিন্যাস ও সমাবেশ", 
+            "ত্রিকোণমিতিক অনুপাত", 
+            "সংযুক্ত ও যৌগিক কোণের ত্রিকোণমিতিক অনুপাত", 
+            "ফাংশন ও ফাংশনের লেখচিত্র", 
+            "অন্তরীকরণ", 
+            "যোগজীকরণ"
+        ];
+        const higher_math_second = [
+            "বাস্তব সংখ্যা ও অসমতা", 
+            "যোগাশ্রয়ী প্রোগ্রাম", 
+            "জটিল সংখ্যা", 
+            "বহুপদী ও বহুপদী সমীকরণ", 
+            "দ্বিপদী বিস্তৃতি", 
+            "কণিক", 
+            "বিপরীত ত্রিকোণমিতিক ফাংশন ও ত্রিকোণমিতিক সমীকরণ", 
+            "স্থিতিবিদ্যা", 
+            "সমতলে বস্তুকণার গতি", 
+            "বিস্তার পরিমাপ ও সম্ভাবনা"
+        ];
+
+        const physics_first = [
+            "ভেক্টর", 
+            "গতিবিদ্যা", 
+            "নিউটনিয়ান বলবিদ্যা", 
+            "কাজ, ক্ষমতা, ও শক্তি", 
+            "মহাকর্ষ ও অভিকর্ষ", 
+            "পদার্থের গাঠনিক ধর্ম", 
+            "পর্যায়বৃত্ত গতি", 
+            "তরঙ্গ", 
+            "আদর্শ গ্যাস ও গ্যাসের গতিতত্ত্ব"
+        ];
+        const physics_second = [
+            "তাপগতিবিদ্যা", 
+            "স্থির তড়িৎ", 
+            "চল তড়িৎ", 
+            "তড়িৎ প্রবাহের চৌম্বক ক্রিয়া ও চৌম্বকত্ব", 
+            "তড়িৎচৌম্বকীয় আবেশ", 
+            "জ্যামিতিক আলোকবিজ্ঞান", 
+            "ভৌত আলোকবিজ্ঞান", 
+            "আধুনিক পদার্থ বিজ্ঞান", 
+            "পরমাণুর মডেল ও নিউক্লিয়ার পদার্থবিজ্ঞান", 
+            "সেমিকন্ডাক্টর ও ইলেক্ট্রনিক্স", 
+            "জ্যোতির্বিজ্ঞান"
+        ];
+
+        const chemistry_first = [
+            "ল্যাবরেটরির নিরাপদ ব্যবহার", 
+            "গুণগত রসায়ন", 
+            "মৌলের পর্যায়বৃত্ত ধর্ম ও রাসায়নিক বন্ধন", 
+            "রাসায়নিক পরিবর্তন", 
+            "কর্মমুখী রসায়ন"
+        ];
+        const chemistry_second = [
+            "পরিবেশ রসায়ন", 
+            "জৈব যৌগ", 
+            "পরিমাণগত রসায়ন", 
+            "তড়িৎ রসায়ন", 
+            "অর্থনৈতিক রসায়ন"
+        ];
+
+        const biology_first = [
+            "কোষ ও এর গঠন", 
+            "কোষ বিভাজন", 
+            "কোষ রসায়ন", 
+            "অণুজীব", 
+            "শৈবাল ও ছত্রাক", 
+            "ব্রায়োফাইটা ও টেরিডোফাইটা", 
+            "নগ্নবীজী ও আবৃতবীজী উদ্ভিদ", 
+            "টিসু ও টিসুতন্ত্র", 
+            "উদ্ভিদ শরীরতত্ত্ব", 
+            "উদ্ভিদ প্রজনন", 
+            "জীব প্রযুক্তি", 
+            "বিস্তার ও সংরক্ষণ,জীবের পরিবেশ"
+        ];
+        const biology_second = [
+            "পরিপাক ও শোষণ", 
+            "রক্ত সঞ্চালন", 
+            "শ্বাসক্রিয়া শ্বসন", 
+            "বর্জ্য নিষ্কাশন", 
+            "চলন ও অঙ্গচালনা", 
+            "সমন্বয় ও নিয়ন্ত্রণ", 
+            "মানব জীবনের ধারাবাহিকতা", 
+            "মানবদেহের প্রতিরক্ষা", 
+            "জিনতত্ত্ব ও বিবর্তন", 
+            "প্রাণীর আচরণ"
+        ];
+
+        // --- APP STATE MANAGEMENT ---
+
+        // Helper to load/save from localStorage
+        const STORAGE_KEY = 'syllabus_tracker_v1';
+        
+        function loadState() {
+            const stored = localStorage.getItem(STORAGE_KEY);
+            return stored ? JSON.parse(stored) : {};
+        }
+
+        function saveState(state) {
+            localStorage.setItem(STORAGE_KEY, JSON.stringify(state));
+        }
+
+        // Initialize state
+        const appState = loadState();
+
+        // Constants for Status
+        const STATUS_NONE = 0;
+        const STATUS_ATTENDED = 1; // Blue
+        const STATUS_COMPLETE = 2; // Red
+
+        function getStatus(subject, paper, chapter) {
+            const key = `${subject}-${paper}-${chapter}`;
+            const val = appState[key];
+            
+            // Backward compatibility for old boolean values
+            if (val === true) return STATUS_ATTENDED;
+            if (val === false || val === undefined) return STATUS_NONE;
+            
+            return val; // Return number if already number
+        }
+
+        function cycleStatus(subject, paper, chapter) {
+            const current = getStatus(subject, paper, chapter);
+            const key = `${subject}-${paper}-${chapter}`;
+            
+            // Cycle: 0 -> 1 -> 2 -> 0
+            let next = STATUS_NONE;
+            if (current === STATUS_NONE) next = STATUS_ATTENDED;
+            else if (current === STATUS_ATTENDED) next = STATUS_COMPLETE;
+            else if (current === STATUS_COMPLETE) next = STATUS_NONE;
+
+            appState[key] = next;
+            saveState(appState);
+            
+            // Pass the details of what was just clicked to trigger animation
+            renderAll(subject, paper, chapter); 
+        }
+
+        // Configuration Object
+        const syllabusData = [
+            {
+                name: "Higher Math",
+                p1: higher_math_first,
+                p2: higher_math_second
+            },
+            {
+                name: "Physics",
+                p1: physics_first,
+                p2: physics_second
+            },
+            {
+                name: "Chemistry",
+                p1: chemistry_first,
+                p2: chemistry_second
+            },
+            {
+                name: "Biology",
+                p1: biology_first,
+                p2: biology_second
+            }
+        ];
+
+        // --- RENDERING LOGIC ---
+
+        function renderAll(clickedSubject = null, clickedPaper = null, clickedChapter = null) {
+            const container = document.getElementById('tracker-container');
+            container.innerHTML = ''; // Clear current
+            const template = document.getElementById('subject-template');
+
+            syllabusData.forEach(subject => {
+                const clone = template.content.cloneNode(true);
+                
+                // Set Subject Title
+                clone.querySelector('.subject-title').textContent = subject.name;
+
+                // --- Calculate Stats ---
+                
+                // Helper to process a paper list
+                const processPaper = (chapters, paperNum, listClass, redBarClass, blueBarClass, countClass) => {
+                    const listEl = clone.querySelector(listClass);
+                    let attendedCount = 0;
+                    let completeCount = 0;
+
+                    // Create objects to sort
+                    const chapterObjects = chapters.map(chap => ({
+                        name: chap,
+                        status: getStatus(subject.name, paperNum, chap)
+                    }));
+
+                    // Sort: Complete (2) > Attended (1) > None (0)
+                    chapterObjects.sort((a, b) => {
+                        return b.status - a.status;
+                    });
+
+                    chapterObjects.forEach(chapObj => {
+                        if (chapObj.status === STATUS_ATTENDED) attendedCount++;
+                        if (chapObj.status === STATUS_COMPLETE) completeCount++;
+
+                        const item = document.createElement('div');
+                        
+                        // Check if this item was just clicked to add animation
+                        const isJustClicked = 
+                            clickedSubject === subject.name && 
+                            clickedPaper === paperNum && 
+                            clickedChapter === chapObj.name;
+
+                        // Base classes
+                        let classes = `chapter-item cursor-pointer p-1.5 rounded-md text-xs border transition-all duration-300 flex items-center gap-2 select-none `;
+                        let iconClass = "far fa-circle";
+                        
+                        // State specific styling
+                        if (chapObj.status === STATUS_COMPLETE) {
+                            // Red Styling
+                            classes += 'bg-red-900/30 border-red-500/30 text-red-100 shadow-[0_0_15px_rgba(239,68,68,0.15)] ';
+                            iconClass = "fas fa-check-circle text-red-500";
+                        } else if (chapObj.status === STATUS_ATTENDED) {
+                            // Blue Styling
+                            classes += 'bg-cyan-900/30 border-cyan-500/30 text-cyan-100 shadow-[0_0_15px_rgba(6,182,212,0.1)] ';
+                            iconClass = "fas fa-check-circle text-cyan-400";
+                        } else {
+                            // Default Styling
+                            classes += 'bg-slate-800/40 border-slate-700/50 text-slate-400 hover:bg-slate-700/50 hover:text-slate-200 ';
+                            iconClass = "far fa-circle text-slate-500";
+                        }
+
+                        // Add animation class if it matches click event
+                        if (isJustClicked) {
+                            classes += 'just-moved ';
+                        }
+
+                        item.className = classes;
+                        
+                        // Icon
+                        const icon = document.createElement('i');
+                        icon.className = `${iconClass} text-xs transition-colors duration-300`;
+                        
+                        // Text
+                        const text = document.createElement('span');
+                        text.textContent = chapObj.name;
+                        text.className = "truncate"; 
+                        if(chapObj.status !== STATUS_NONE) text.classList.add("font-medium"); 
+
+                        item.appendChild(icon);
+                        item.appendChild(text);
+
+                        // Click Event
+                        item.onclick = () => {
+                            cycleStatus(subject.name, paperNum, chapObj.name);
+                        };
+
+                        listEl.appendChild(item);
+                    });
+
+                    // Update Paper Stats
+                    const totalActive = attendedCount + completeCount;
+                    const percentRed = chapters.length > 0 ? (completeCount / chapters.length) * 100 : 0;
+                    const percentBlue = chapters.length > 0 ? (attendedCount / chapters.length) * 100 : 0;
+
+                    clone.querySelector(countClass).textContent = `(${totalActive}/${chapters.length})`;
+                    
+                    // Set widths for stacked bars
+                    clone.querySelector(redBarClass).style.width = `${percentRed}%`;
+                    clone.querySelector(blueBarClass).style.width = `${percentBlue}%`;
+                    
+                    return { total: chapters.length, attended: attendedCount, complete: completeCount };
+                };
+
+                // Process Papers
+                const p1Stats = processPaper(
+                    subject.p1, '1st', 
+                    '.paper1-list', '.paper1-progress-red', '.paper1-progress-blue', '.paper1-count'
+                );
+                const p2Stats = processPaper(
+                    subject.p2, '2nd', 
+                    '.paper2-list', '.paper2-progress-red', '.paper2-progress-blue', '.paper2-count'
+                );
+
+                // --- Overall Stats ---
+                const totalChapters = p1Stats.total + p2Stats.total;
+                const totalAttended = p1Stats.attended + p2Stats.attended;
+                const totalComplete = p1Stats.complete + p2Stats.complete;
+                const totalActive = totalAttended + totalComplete;
+                
+                // Percents for Main Subject Bar
+                const totalPercentRed = totalChapters > 0 ? (totalComplete / totalChapters) * 100 : 0;
+                const totalPercentBlue = totalChapters > 0 ? (totalAttended / totalChapters) * 100 : 0;
+                
+                // Display text percent (combines both)
+                const displayPercent = Math.round(totalPercentRed + totalPercentBlue);
+
+                clone.querySelector('.subject-percent').textContent = `${displayPercent}%`;
+                
+                // Set Subject Bar Widths
+                clone.querySelector('.subject-progress-red').style.width = `${totalPercentRed}%`;
+                clone.querySelector('.subject-progress-blue').style.width = `${totalPercentBlue}%`;
+
+                // Add Glow to subject card if 100% (Any combination of Blue/Red that equals 100%)
+                if (displayPercent === 100) {
+                    const card = clone.querySelector('.glass-panel');
+                    // Change glow color based on if it's fully RED (Mastered) or mixed
+                    if (totalComplete === totalChapters) {
+                        card.classList.add('shadow-[0_0_30px_rgba(239,68,68,0.2)]'); // Red Glow
+                        card.style.borderColor = 'rgba(239, 68, 68, 0.4)';
+                    } else {
+                        card.classList.add('shadow-[0_0_30px_rgba(6,182,212,0.15)]'); // Blue Glow
+                        card.style.borderColor = 'rgba(34, 211, 238, 0.3)';
+                    }
+                }
+
+                container.appendChild(clone);
+            });
+        }
+
+        // Initial Render
+        document.addEventListener('DOMContentLoaded', () => renderAll());
+
+    </script>
+</body>
+</html>
