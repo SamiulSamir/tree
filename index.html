@@ -12,10 +12,7 @@
         body {
             font-family: 'Inter', sans-serif;
             background-color: #0f172a;
-            background-image: 
-                radial-gradient(at 0% 0%, hsla(253,16%,7%,1) 0, transparent 50%), 
-                radial-gradient(at 50% 0%, hsla(225,39%,30%,1) 0, transparent 50%), 
-                radial-gradient(at 100% 0%, hsla(339,49%,30%,1) 0, transparent 50%);
+            background-image:radial-gradient(at 0% 0%, hsla(253, 16%, 7%, 1) 0, transparent 50%), radial-gradient(at 50% 0%, hsla(225, 39%, 30%, 1) 0, transparent 50%), radial-gradient(at 100% 0%, hsl(339deg 10.83% 6.77%) 0, transparent 50%);
             background-attachment: fixed;
             background-size: cover;
             color: #e2e8f0;
@@ -85,7 +82,7 @@
         <h1 class="text-2xl md:text-3xl font-bold text-transparent bg-clip-text bg-gradient-to-r from-blue-400 to-cyan-300 tracking-tight mb-1">
             Syllabus Tracker
         </h1>
-        <p class="text-slate-400 font-light text-xs">Click once for Attended (Blue), twice for Complete (Red)</p>
+        <p class="text-slate-400 font-light text-xs">Click once for (Blue), twice for (Red)</p>
     </header>
 
     <!-- Main Grid -->
@@ -112,9 +109,9 @@
             </div>
 
             <!-- Papers Container -->
-            <div class="flex-1 grid grid-cols-2 gap-2 h-full overflow-hidden">
+            <div class="papers-container flex-1 grid grid-cols-2 gap-2 h-full overflow-hidden">
                 <!-- Paper 1 -->
-                <div class="flex flex-col h-full overflow-hidden">
+                <div class="paper1-wrapper flex flex-col h-full overflow-hidden">
                     <div class="mb-2">
                         <h3 class="text-[10px] font-semibold text-slate-300 uppercase tracking-wider mb-0.5">
                             Paper 1 <span class="paper1-count text-cyan-400 ml-0.5">(0)</span>
@@ -130,7 +127,7 @@
                 </div>
 
                 <!-- Paper 2 -->
-                <div class="flex flex-col h-full overflow-hidden">
+                <div class="paper2-wrapper flex flex-col h-full overflow-hidden">
                     <div class="mb-2">
                         <h3 class="text-[10px] font-semibold text-slate-300 uppercase tracking-wider mb-0.5">
                             Paper 2 <span class="paper2-count text-cyan-400 ml-0.5">(0)</span>
@@ -149,105 +146,127 @@
     </template>
 
     <script>
-        // --- DATA DEFINITIONS ---
-        // Updated with user provided Bengali Syllabus
-        
-        const higher_math_first = [
-            "ম্যাট্রিক্স ও নির্ণায়ক", 
-            "ভেক্টর", 
-            "সরলরেখা", 
-            "বৃত্ত", 
-            "বিন্যাস ও সমাবেশ", 
-            "ত্রিকোণমিতিক অনুপাত", 
-            "সংযুক্ত ও যৌগিক কোণের ত্রিকোণমিতিক অনুপাত", 
-            "ফাংশন ও ফাংশনের লেখচিত্র", 
-            "অন্তরীকরণ", 
-            "যোগজীকরণ"
-        ];
-        const higher_math_second = [
-            "বাস্তব সংখ্যা ও অসমতা", 
-            "যোগাশ্রয়ী প্রোগ্রাম", 
-            "জটিল সংখ্যা", 
-            "বহুপদী ও বহুপদী সমীকরণ", 
-            "দ্বিপদী বিস্তৃতি", 
-            "কণিক", 
-            "বিপরীত ত্রিকোণমিতিক ফাংশন ও ত্রিকোণমিতিক সমীকরণ", 
-            "স্থিতিবিদ্যা", 
-            "সমতলে বস্তুকণার গতি", 
-            "বিস্তার পরিমাপ ও সম্ভাবনা"
-        ];
+        // --- DATA DEFINITIONS (Topic Based) ---
+        const topicsDB = {
+            'HM-1': [
+                { name: "ম্যাট্রিক্স ও নির্ণায়ক", topics: 36 },
+                { name: "ভেক্টর", topics: 18 },
+                { name: "সরলরেখা", topics: 48 },
+                { name: "বৃত্ত", topics: 33 },
+                { name: "বিন্যাস ও সমাবেশ", topics: 20 },
+                { name: "ত্রিকোণমিতিক অনুপাত", topics: 31 },
+                { name: "সংযুক্ত ও যৌগিক কোণের ত্রিকোণমিতিক অনুপাত", topics: 43 },
+                { name: "ফাংশন ও ফাংশনের লেখচিত্র", topics: 32 },
+                { name: "অন্তরীকরণ", topics: 48 },
+                { name: "যোগজীকরণ", topics: 53 }
+            ],
+            'HM-2': [
+                { name: "বাস্তব সংখ্যা ও অসমতা", topics: 20 },
+                { name: "যোগাশ্রয়ী প্রোগ্রাম", topics: 16 },
+                { name: "জটিল সংখ্যা", topics: 30 },
+                { name: "বহুপদী ও বহুপদী সমীকরণ", topics: 40 },
+                { name: "দ্বিপদী বিস্তৃতি", topics: 38 },
+                { name: "কণিক", topics: 45 },
+                { name: "বিপরীত ত্রিকোণমিতিক ফাংশন ও ত্রিকোণমিতিক সমীকরণ", topics: 36 },
+                { name: "স্থিতিবিদ্যা", topics: 43 },
+                { name: "সমতলে বস্তুকণার গতি", topics: 37 },
+                { name: "বিস্তার পরিমাপ ও সম্ভাবনা", topics: 24 }
+            ],
+            'PHY-1': [
+                { name: "ভৌত বিজ্ঞান ও পরিমাপ", topics: 8 },
+                { name: "ভেক্টর", topics: 52 },
+                { name: "গতিবিদ্যা", topics: 40 },
+                { name: "নিউটনিয়ান বলবিদ্যা", topics: 58 },
+                { name: "কাজ, ক্ষমতা, ও শক্তি", topics: 44 },
+                { name: "মহাকর্ষ ও অভিকর্ষ", topics: 39 },
+                { name: "পদার্থের গাঠনিক ধর্ম", topics: 39 },
+                { name: "পর্যায়বৃত্ত গতি", topics: 49 },
+                { name: "তরঙ্গ", topics: 35 },
+                { name: "আদর্শ গ্যাস ও গ্যাসের গতিতত্ত্ব", topics: 37 }
+            ],
+            'PHY-2': [
+                { name: "তাপগতিবিদ্যা", topics: 47 },
+                { name: "স্থির তড়িৎ", topics: 44 },
+                { name: "চল তড়িৎ", topics: 48 },
+                { name: "তড়িৎ প্রবাহের চৌম্বক ক্রিয়া ও চৌম্বকত্ব", topics: 30 },
+                { name: "তড়িৎচৌম্বকীয় আবেশ", topics: 26 },
+                { name: "জ্যামিতিক আলোকবিজ্ঞান", topics: 32 },
+                { name: "ভৌত আলোকবিজ্ঞান", topics: 32 },
+                { name: "আধুনিক পদার্থ বিজ্ঞান", topics: 34 },
+                { name: "পরমাণুর মডেল ও নিউক্লিয়ার পদার্থবিজ্ঞান", topics: 34 },
+                { name: "সেমিকন্ডাক্টর ও ইলেক্ট্রনিক্স", topics: 34 },
+                { name: "জ্যোতির্বিজ্ঞান", topics: 12 }
+            ],
+            'CHEM-1': [
+                { name: "ল্যাবরেটরির নিরাপদ ব্যবহার", topics: 20 },
+                { name: "গুণগত রসায়ন", topics: 30 },
+                { name: "মৌলের পর্যায়বৃত্ত ধর্ম ও রাসায়নিক বন্ধন", topics: 47 },
+                { name: "রাসায়নিক পরিবর্তন", topics: 40 },
+                { name: "কর্মমুখী রসায়ন", topics: 24 }
+            ],
+            'CHEM-2': [
+                { name: "পরিবেশ রসায়ন", topics: 33 },
+                { name: "জৈব যৌগ", topics: 87 },
+                { name: "পরিমাণগত রসায়ন", topics: 29 },
+                { name: "তড়িৎ রসায়ন", topics: 33 },
+                { name: "অর্থনৈতিক রসায়ন", topics: 38 }
+            ],
+            'BIO-1': [
+                { name: "কোষ ও এর গঠন", topics: 25 },
+                { name: "কোষ বিভাজন", topics: 19 },
+                { name: "কোষ রসায়ন", topics: 20 },
+                { name: "অণুজীব", topics: 14 },
+                { name: "শৈবাল ও ছত্রাক", topics: 18 },
+                { name: "ব্রায়োফাইটা ও টেরিডোফাইটা", topics: 12 },
+                { name: "নগ্নবীজী ও আবৃতবীজী উদ্ভিদ", topics: 15 },
+                { name: "টিসু ও টিসুতন্ত্র", topics: 18 },
+                { name: "উদ্ভিদ শরীরতত্ত্ব", topics: 30 },
+                { name: "উদ্ভিদ প্রজনন", topics: 12 },
+                { name: "জীব প্রযুক্তি", topics: 10 },
+                { name: "বিস্তার ও সংরক্ষণ, জীবের পরিবেশ", topics: 12 }
+            ],
+            'BIO-2': [
+                { name: "প্রাণীর বিভিন্নতা ও শ্রেণিবিন্যাস", topics: 18 },
+                { name: "প্রাণীর পরিচিতি", topics: 25 },
+                { name: "পরিপাক ও শোষণ", topics: 15 },
+                { name: "রক্ত সঞ্চালন", topics: 18 },
+                { name: "শ্বসন ও শ্বাসক্রিয়া", topics: 12 },
+                { name: "বর্জ্য নিষ্কাশন", topics: 10 },
+                { name: "চলন ও অঙ্গচালনা", topics: 12 },
+                { name: "সমন্বয় ও নিয়ন্ত্রণ", topics: 20 },
+                { name: "মানব জীবনের ধারাবাহিকতা", topics: 15 },
+                { name: "মানবদেহের প্রতিরক্ষা", topics: 12 },
+                { name: "জিনতত্ত্ব ও বিবর্তন", topics: 18 },
+                { name: "প্রাণীর আচরণ", topics: 10 }
+            ]
+        };
 
-        const physics_first = [
-            "ভেক্টর", 
-            "গতিবিদ্যা", 
-            "নিউটনিয়ান বলবিদ্যা", 
-            "কাজ, ক্ষমতা, ও শক্তি", 
-            "মহাকর্ষ ও অভিকর্ষ", 
-            "পদার্থের গাঠনিক ধর্ম", 
-            "পর্যায়বৃত্ত গতি", 
-            "তরঙ্গ", 
-            "আদর্শ গ্যাস ও গ্যাসের গতিতত্ত্ব"
-        ];
-        const physics_second = [
-            "তাপগতিবিদ্যা", 
-            "স্থির তড়িৎ", 
-            "চল তড়িৎ", 
-            "তড়িৎ প্রবাহের চৌম্বক ক্রিয়া ও চৌম্বকত্ব", 
-            "তড়িৎচৌম্বকীয় আবেশ", 
-            "জ্যামিতিক আলোকবিজ্ঞান", 
-            "ভৌত আলোকবিজ্ঞান", 
-            "আধুনিক পদার্থ বিজ্ঞান", 
-            "পরমাণুর মডেল ও নিউক্লিয়ার পদার্থবিজ্ঞান", 
-            "সেমিকন্ডাক্টর ও ইলেক্ট্রনিক্স", 
-            "জ্যোতির্বিজ্ঞান"
-        ];
-
-        const chemistry_first = [
-            "ল্যাবরেটরির নিরাপদ ব্যবহার", 
-            "গুণগত রসায়ন", 
-            "মৌলের পর্যায়বৃত্ত ধর্ম ও রাসায়নিক বন্ধন", 
-            "রাসায়নিক পরিবর্তন", 
-            "কর্মমুখী রসায়ন"
-        ];
-        const chemistry_second = [
-            "পরিবেশ রসায়ন", 
-            "জৈব যৌগ", 
-            "পরিমাণগত রসায়ন", 
-            "তড়িৎ রসায়ন", 
-            "অর্থনৈতিক রসায়ন"
-        ];
-
-        const biology_first = [
-            "কোষ ও এর গঠন", 
-            "কোষ বিভাজন", 
-            "কোষ রসায়ন", 
-            "অণুজীব", 
-            "শৈবাল ও ছত্রাক", 
-            "ব্রায়োফাইটা ও টেরিডোফাইটা", 
-            "নগ্নবীজী ও আবৃতবীজী উদ্ভিদ", 
-            "টিসু ও টিসুতন্ত্র", 
-            "উদ্ভিদ শরীরতত্ত্ব", 
-            "উদ্ভিদ প্রজনন", 
-            "জীব প্রযুক্তি", 
-            "বিস্তার ও সংরক্ষণ,জীবের পরিবেশ"
-        ];
-        const biology_second = [
-            "পরিপাক ও শোষণ", 
-            "রক্ত সঞ্চালন", 
-            "শ্বাসক্রিয়া শ্বসন", 
-            "বর্জ্য নিষ্কাশন", 
-            "চলন ও অঙ্গচালনা", 
-            "সমন্বয় ও নিয়ন্ত্রণ", 
-            "মানব জীবনের ধারাবাহিকতা", 
-            "মানবদেহের প্রতিরক্ষা", 
-            "জিনতত্ত্ব ও বিবর্তন", 
-            "প্রাণীর আচরণ"
+        const syllabusData = [
+            {
+                name: "Higher Math",
+                p1: topicsDB['HM-1'],
+                p2: topicsDB['HM-2']
+            },
+            {
+                name: "Physics",
+                p1: topicsDB['PHY-1'],
+                p2: topicsDB['PHY-2']
+            },
+            {
+                name: "Chemistry",
+                p1: topicsDB['CHEM-1'],
+                p2: topicsDB['CHEM-2']
+            },
+            {
+                name: "Biology",
+                p1: topicsDB['BIO-1'],
+                p2: topicsDB['BIO-2']
+            }
         ];
 
         // --- APP STATE MANAGEMENT ---
 
-        // Helper to load/save from localStorage
-        const STORAGE_KEY = 'syllabus_tracker_v1';
+        const STORAGE_KEY = 'syllabus_tracker_v2'; // Changed key to reset old invalid state format safely
         
         function loadState() {
             const stored = localStorage.getItem(STORAGE_KEY);
@@ -258,10 +277,8 @@
             localStorage.setItem(STORAGE_KEY, JSON.stringify(state));
         }
 
-        // Initialize state
         const appState = loadState();
 
-        // Constants for Status
         const STATUS_NONE = 0;
         const STATUS_ATTENDED = 1; // Blue
         const STATUS_COMPLETE = 2; // Red
@@ -270,18 +287,16 @@
             const key = `${subject}-${paper}-${chapter}`;
             const val = appState[key];
             
-            // Backward compatibility for old boolean values
             if (val === true) return STATUS_ATTENDED;
             if (val === false || val === undefined) return STATUS_NONE;
             
-            return val; // Return number if already number
+            return val; 
         }
 
         function cycleStatus(subject, paper, chapter) {
             const current = getStatus(subject, paper, chapter);
             const key = `${subject}-${paper}-${chapter}`;
             
-            // Cycle: 0 -> 1 -> 2 -> 0
             let next = STATUS_NONE;
             if (current === STATUS_NONE) next = STATUS_ATTENDED;
             else if (current === STATUS_ATTENDED) next = STATUS_COMPLETE;
@@ -290,177 +305,130 @@
             appState[key] = next;
             saveState(appState);
             
-            // Pass the details of what was just clicked to trigger animation
             renderAll(subject, paper, chapter); 
         }
-
-        // Configuration Object
-        const syllabusData = [
-            {
-                name: "Higher Math",
-                p1: higher_math_first,
-                p2: higher_math_second
-            },
-            {
-                name: "Physics",
-                p1: physics_first,
-                p2: physics_second
-            },
-            {
-                name: "Chemistry",
-                p1: chemistry_first,
-                p2: chemistry_second
-            },
-            {
-                name: "Biology",
-                p1: biology_first,
-                p2: biology_second
-            }
-        ];
 
         // --- RENDERING LOGIC ---
 
         function renderAll(clickedSubject = null, clickedPaper = null, clickedChapter = null) {
             const container = document.getElementById('tracker-container');
-            container.innerHTML = ''; // Clear current
+            container.innerHTML = ''; 
             const template = document.getElementById('subject-template');
 
             syllabusData.forEach(subject => {
                 const clone = template.content.cloneNode(true);
-                
-                // Set Subject Title
                 clone.querySelector('.subject-title').textContent = subject.name;
 
-                // --- Calculate Stats ---
-                
-                // Helper to process a paper list
-                const processPaper = (chapters, paperNum, listClass, redBarClass, blueBarClass, countClass) => {
+                // --- Calculate Stats based on Topics ---
+                const processPaper = (chapters, paperNum, listClass, redBarClass, blueBarClass, countClass, wrapperClass) => {
                     const listEl = clone.querySelector(listClass);
-                    let attendedCount = 0;
-                    let completeCount = 0;
+                    const wrapperEl = clone.querySelector(wrapperClass);
 
-                    // Create objects to sort
+                    // Hide container if there are no chapters (e.g. ICT Paper 2)
+                    if (!chapters || chapters.length === 0) {
+                        wrapperEl.style.display = 'none';
+                        return { totalTopics: 0, attendedTopics: 0, completeTopics: 0 };
+                    }
+
+                    let attendedTopics = 0;
+                    let completeTopics = 0;
+                    let totalTopics = 0;
+
                     const chapterObjects = chapters.map(chap => ({
-                        name: chap,
-                        status: getStatus(subject.name, paperNum, chap)
+                        name: chap.name,
+                        topics: chap.topics,
+                        status: getStatus(subject.name, paperNum, chap.name)
                     }));
 
-                    // Sort: Complete (2) > Attended (1) > None (0)
-                    chapterObjects.sort((a, b) => {
-                        return b.status - a.status;
-                    });
+                    chapterObjects.sort((a, b) => b.status - a.status);
 
                     chapterObjects.forEach(chapObj => {
-                        if (chapObj.status === STATUS_ATTENDED) attendedCount++;
-                        if (chapObj.status === STATUS_COMPLETE) completeCount++;
+                        totalTopics += chapObj.topics;
+                        if (chapObj.status === STATUS_ATTENDED) attendedTopics += chapObj.topics;
+                        if (chapObj.status === STATUS_COMPLETE) completeTopics += chapObj.topics;
 
                         const item = document.createElement('div');
-                        
-                        // Check if this item was just clicked to add animation
-                        const isJustClicked = 
-                            clickedSubject === subject.name && 
-                            clickedPaper === paperNum && 
-                            clickedChapter === chapObj.name;
+                        const isJustClicked = clickedSubject === subject.name && clickedPaper === paperNum && clickedChapter === chapObj.name;
 
-                        // Base classes
                         let classes = `chapter-item cursor-pointer p-1.5 rounded-md text-xs border transition-all duration-300 flex items-center gap-2 select-none `;
                         let iconClass = "far fa-circle";
                         
-                        // State specific styling
                         if (chapObj.status === STATUS_COMPLETE) {
-                            // Red Styling
                             classes += 'bg-red-900/30 border-red-500/30 text-red-100 shadow-[0_0_15px_rgba(239,68,68,0.15)] ';
                             iconClass = "fas fa-check-circle text-red-500";
                         } else if (chapObj.status === STATUS_ATTENDED) {
-                            // Blue Styling
                             classes += 'bg-cyan-900/30 border-cyan-500/30 text-cyan-100 shadow-[0_0_15px_rgba(6,182,212,0.1)] ';
                             iconClass = "fas fa-check-circle text-cyan-400";
                         } else {
-                            // Default Styling
                             classes += 'bg-slate-800/40 border-slate-700/50 text-slate-400 hover:bg-slate-700/50 hover:text-slate-200 ';
                             iconClass = "far fa-circle text-slate-500";
                         }
 
-                        // Add animation class if it matches click event
-                        if (isJustClicked) {
-                            classes += 'just-moved ';
-                        }
-
+                        if (isJustClicked) classes += 'just-moved ';
                         item.className = classes;
                         
-                        // Icon
                         const icon = document.createElement('i');
-                        icon.className = `${iconClass} text-xs transition-colors duration-300`;
+                        icon.className = `${iconClass} text-xs transition-colors duration-300 flex-shrink-0`;
                         
-                        // Text
                         const text = document.createElement('span');
                         text.textContent = chapObj.name;
-                        text.className = "truncate"; 
-                        if(chapObj.status !== STATUS_NONE) text.classList.add("font-medium"); 
-
+                        text.className = "truncate w-full";
+                        if(chapObj.status !== STATUS_NONE) text.classList.add("font-medium");
+                        
                         item.appendChild(icon);
                         item.appendChild(text);
 
-                        // Click Event
-                        item.onclick = () => {
-                            cycleStatus(subject.name, paperNum, chapObj.name);
-                        };
-
+                        item.onclick = () => cycleStatus(subject.name, paperNum, chapObj.name);
                         listEl.appendChild(item);
                     });
 
-                    // Update Paper Stats
-                    const totalActive = attendedCount + completeCount;
-                    const percentRed = chapters.length > 0 ? (completeCount / chapters.length) * 100 : 0;
-                    const percentBlue = chapters.length > 0 ? (attendedCount / chapters.length) * 100 : 0;
+                    const totalActiveTopics = attendedTopics + completeTopics;
+                    const percentRed = totalTopics > 0 ? (completeTopics / totalTopics) * 100 : 0;
+                    const percentBlue = totalTopics > 0 ? (attendedTopics / totalTopics) * 100 : 0;
 
-                    clone.querySelector(countClass).textContent = `(${totalActive}/${chapters.length})`;
-                    
-                    // Set widths for stacked bars
+                    clone.querySelector(countClass).textContent = `(${totalActiveTopics}/${totalTopics})`;
                     clone.querySelector(redBarClass).style.width = `${percentRed}%`;
                     clone.querySelector(blueBarClass).style.width = `${percentBlue}%`;
                     
-                    return { total: chapters.length, attended: attendedCount, complete: completeCount };
+                    return { totalTopics, attendedTopics, completeTopics };
                 };
 
-                // Process Papers
                 const p1Stats = processPaper(
                     subject.p1, '1st', 
-                    '.paper1-list', '.paper1-progress-red', '.paper1-progress-blue', '.paper1-count'
+                    '.paper1-list', '.paper1-progress-red', '.paper1-progress-blue', '.paper1-count', '.paper1-wrapper'
                 );
                 const p2Stats = processPaper(
                     subject.p2, '2nd', 
-                    '.paper2-list', '.paper2-progress-red', '.paper2-progress-blue', '.paper2-count'
+                    '.paper2-list', '.paper2-progress-red', '.paper2-progress-blue', '.paper2-count', '.paper2-wrapper'
                 );
 
+                // Adjust grid column if only 1 paper exists (e.g. ICT)
+                if(subject.p2.length === 0) {
+                    clone.querySelector('.paper1-wrapper').classList.remove('col-span-1');
+                    clone.querySelector('.paper1-wrapper').style.gridColumn = "span 2 / span 2";
+                }
+
                 // --- Overall Stats ---
-                const totalChapters = p1Stats.total + p2Stats.total;
-                const totalAttended = p1Stats.attended + p2Stats.attended;
-                const totalComplete = p1Stats.complete + p2Stats.complete;
-                const totalActive = totalAttended + totalComplete;
+                const totalSubjectTopics = p1Stats.totalTopics + p2Stats.totalTopics;
+                const totalSubjectAttended = p1Stats.attendedTopics + p2Stats.attendedTopics;
+                const totalSubjectComplete = p1Stats.completeTopics + p2Stats.completeTopics;
                 
-                // Percents for Main Subject Bar
-                const totalPercentRed = totalChapters > 0 ? (totalComplete / totalChapters) * 100 : 0;
-                const totalPercentBlue = totalChapters > 0 ? (totalAttended / totalChapters) * 100 : 0;
+                const totalPercentRed = totalSubjectTopics > 0 ? (totalSubjectComplete / totalSubjectTopics) * 100 : 0;
+                const totalPercentBlue = totalSubjectTopics > 0 ? (totalSubjectAttended / totalSubjectTopics) * 100 : 0;
                 
-                // Display text percent (combines both)
                 const displayPercent = Math.round(totalPercentRed + totalPercentBlue);
 
                 clone.querySelector('.subject-percent').textContent = `${displayPercent}%`;
-                
-                // Set Subject Bar Widths
                 clone.querySelector('.subject-progress-red').style.width = `${totalPercentRed}%`;
                 clone.querySelector('.subject-progress-blue').style.width = `${totalPercentBlue}%`;
 
-                // Add Glow to subject card if 100% (Any combination of Blue/Red that equals 100%)
                 if (displayPercent === 100) {
                     const card = clone.querySelector('.glass-panel');
-                    // Change glow color based on if it's fully RED (Mastered) or mixed
-                    if (totalComplete === totalChapters) {
-                        card.classList.add('shadow-[0_0_30px_rgba(239,68,68,0.2)]'); // Red Glow
+                    if (totalSubjectComplete === totalSubjectTopics) {
+                        card.classList.add('shadow-[0_0_30px_rgba(239,68,68,0.2)]'); 
                         card.style.borderColor = 'rgba(239, 68, 68, 0.4)';
                     } else {
-                        card.classList.add('shadow-[0_0_30px_rgba(6,182,212,0.15)]'); // Blue Glow
+                        card.classList.add('shadow-[0_0_30px_rgba(6,182,212,0.15)]'); 
                         card.style.borderColor = 'rgba(34, 211, 238, 0.3)';
                     }
                 }
@@ -469,7 +437,6 @@
             });
         }
 
-        // Initial Render
         document.addEventListener('DOMContentLoaded', () => renderAll());
 
     </script>
