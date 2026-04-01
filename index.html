@@ -12,7 +12,7 @@
         body {
             font-family: 'Inter', sans-serif;
             background-color: #0f172a;
-            background-image:radial-gradient(at 0% 0%, hsla(253, 16%, 7%, 1) 0, transparent 50%), radial-gradient(at 50% 0%, hsla(225, 39%, 30%, 1) 0, transparent 50%), radial-gradient(at 100% 0%, hsl(339deg 10.83% 6.77%) 0, transparent 50%);
+            background-image: radial-gradient(at 0% 0%, hsla(253, 16%, 7%, 1) 0, transparent 50%), radial-gradient(at 50% 0%, hsla(225, 39%, 30%, 1) 0, transparent 50%), radial-gradient(at 100% 0%, hsl(339deg 10.83% 6.77%) 0, transparent 50%);
             background-attachment: fixed;
             background-size: cover;
             color: #e2e8f0;
@@ -114,7 +114,7 @@
                 <div class="paper1-wrapper flex flex-col h-full overflow-hidden">
                     <div class="mb-2">
                         <h3 class="text-[10px] font-semibold text-slate-300 uppercase tracking-wider mb-0.5">
-                            Paper 1 <span class="paper1-count text-cyan-400 ml-0.5">(0)</span>
+                            Paper 1 <span class="paper1-count text-cyan-400 ml-0.5">(0%)</span>
                         </h3>
                         <div class="w-full bg-slate-700/30 rounded-full h-1 flex overflow-hidden">
                             <div class="paper1-progress-red bg-red-500 h-1 progress-bar-fill" style="width: 0%"></div>
@@ -130,7 +130,7 @@
                 <div class="paper2-wrapper flex flex-col h-full overflow-hidden">
                     <div class="mb-2">
                         <h3 class="text-[10px] font-semibold text-slate-300 uppercase tracking-wider mb-0.5">
-                            Paper 2 <span class="paper2-count text-cyan-400 ml-0.5">(0)</span>
+                            Paper 2 <span class="paper2-count text-cyan-400 ml-0.5">(0%)</span>
                         </h3>
                         <div class="w-full bg-slate-700/30 rounded-full h-1 flex overflow-hidden">
                             <div class="paper2-progress-red bg-red-500 h-1 progress-bar-fill" style="width: 0%"></div>
@@ -382,11 +382,11 @@
                         listEl.appendChild(item);
                     });
 
-                    const totalActiveTopics = attendedTopics + completeTopics;
                     const percentRed = totalTopics > 0 ? (completeTopics / totalTopics) * 100 : 0;
                     const percentBlue = totalTopics > 0 ? (attendedTopics / totalTopics) * 100 : 0;
+                    const paperDisplayPercent = Math.round(percentRed + percentBlue);
 
-                    clone.querySelector(countClass).textContent = `(${totalActiveTopics}/${totalTopics})`;
+                    clone.querySelector(countClass).textContent = `(${paperDisplayPercent}%)`;
                     clone.querySelector(redBarClass).style.width = `${percentRed}%`;
                     clone.querySelector(blueBarClass).style.width = `${percentBlue}%`;
                     
