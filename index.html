@@ -4,11 +4,11 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Syllabus Tracker</title>
-    <script src="https://cdn.tailwindcss.com"></script>
     <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css" rel="stylesheet">
     <style>
         @import url('https://fonts.googleapis.com/css2?family=Inter:wght@300;400;600;700&display=swap');
 
+        /* Base Body Styling */
         body {
             font-family: 'Inter', sans-serif;
             background-color: #0f172a;
@@ -17,6 +17,59 @@
             background-size: cover;
             color: #e2e8f0;
             min-height: 100vh;
+            margin: 0;
+            padding: 0.5rem;
+            overflow-x: hidden;
+        }
+
+        @media (min-width: 768px) {
+            body { padding: 1rem; }
+        }
+
+        /* Typography & Header */
+        header {
+            margin-bottom: 1rem;
+            text-align: center;
+        }
+
+        .main-title {
+            font-size: 1.5rem;
+            font-weight: 700;
+            background-image: linear-gradient(to right, #60a5fa, #67e8f9);
+            -webkit-background-clip: text;
+            background-clip: text;
+            color: transparent;
+            letter-spacing: -0.025em;
+            margin: 0 0 0.25rem 0;
+        }
+
+        @media (min-width: 768px) {
+            .main-title { font-size: 1.875rem; }
+        }
+
+        .header-subtitle {
+            color: #94a3b8;
+            font-weight: 300;
+            font-size: 0.75rem;
+            margin: 0;
+        }
+
+        /* Grid Layout */
+        #tracker-container {
+            display: grid;
+            grid-template-columns: repeat(1, minmax(0, 1fr));
+            gap: 0.75rem;
+            max-width: 1920px;
+            margin: 0 auto;
+            height: calc(100vh - 100px);
+        }
+
+        @media (min-width: 768px) {
+            #tracker-container { grid-template-columns: repeat(2, minmax(0, 1fr)); }
+        }
+
+        @media (min-width: 1280px) {
+            #tracker-container { grid-template-columns: repeat(4, minmax(0, 1fr)); }
         }
 
         /* Glassmorphism Classes */
@@ -25,17 +78,190 @@
             backdrop-filter: blur(16px);
             -webkit-backdrop-filter: blur(16px);
             border: 1px solid rgba(255, 255, 255, 0.08);
+            border-radius: 0.75rem;
+            padding: 0.75rem;
+            display: flex;
+            flex-direction: column;
+            height: 100%;
+            box-shadow: 0 25px 50px -12px rgba(0, 0, 0, 0.4);
+            box-sizing: border-box;
+            transition: box-shadow 0.3s, border-color 0.3s;
         }
         
         .glass-card {
             background: rgba(30, 41, 59, 0.4); 
             backdrop-filter: blur(8px);
             border: 1px solid rgba(255, 255, 255, 0.05);
+            border-radius: 0.5rem;
+            padding: 0.375rem;
+            flex: 1;
+            overflow-y: auto;
+            display: flex;
+            flex-direction: column;
+            gap: 0.375rem;
+        }
+
+        /* Subject Components */
+        .subject-header-wrapper {
+            margin-bottom: 0.75rem;
+        }
+
+        .subject-header-top {
+            display: flex;
+            justify-content: space-between;
+            align-items: flex-end;
+            margin-bottom: 0.25rem;
+        }
+
+        .subject-title {
+            font-size: 1.125rem;
+            font-weight: 700;
+            color: white;
+            margin: 0;
+        }
+
+        .subject-percent {
+            font-size: 10px;
+            font-family: monospace;
+            color: #22d3ee;
+        }
+
+        /* Papers Components */
+        .papers-container {
+            flex: 1;
+            display: grid;
+            grid-template-columns: repeat(2, minmax(0, 1fr));
+            gap: 0.5rem;
+            height: 100%;
+            overflow: hidden;
+        }
+
+        .paper-wrapper {
+            display: flex;
+            flex-direction: column;
+            height: 100%;
+            overflow: hidden;
+        }
+
+        .paper-header-wrapper {
+            margin-bottom: 0.5rem;
+        }
+
+        .paper-title {
+            font-size: 10px;
+            font-weight: 600;
+            color: #cbd5e1;
+            text-transform: uppercase;
+            letter-spacing: 0.05em;
+            margin: 0 0 0.125rem 0;
+        }
+
+        .paper-count {
+            color: #22d3ee;
+            margin-left: 0.125rem;
+        }
+
+        /* Progress Bars */
+        .progress-bar-fill {
+            transition: width 0.6s cubic-bezier(0.4, 0, 0.2, 1);
+        }
+
+        .progress-bar-container-subject {
+            width: 100%;
+            background-color: rgba(51, 65, 85, 0.5);
+            border-radius: 9999px;
+            height: 0.375rem;
+            overflow: hidden;
+            display: flex;
+        }
+
+        .progress-bar-container-paper {
+            width: 100%;
+            background-color: rgba(51, 65, 85, 0.3);
+            border-radius: 9999px;
+            height: 0.25rem;
+            display: flex;
+            overflow: hidden;
+        }
+
+        .subject-progress-red, .paper-progress-red { background-color: #33ff00; height: 100%; }
+        .subject-progress-blue, .paper-progress-blue { background-color: #00869e; height: 100%; }
+
+        /* Chapter Items */
+        .chapter-item {
+            cursor: pointer;
+            padding: 0.375rem;
+            border-radius: 0.375rem;
+            font-size: 0.75rem;
+            border: 1px solid transparent;
+            transition: all 0.3s ease;
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+            user-select: none;
+        }
+
+        .chapter-item.status-complete {
+            background-color: rgb(115 255 33 / 37%);
+            border-color: rgb(0 255 41);
+            color: #fee2e2;
+            text-shadow: 0 0 2px #000000;
+            box-shadow: 0 0 15px rgba(239, 68, 68, 0.15);
+        }
+
+        .chapter-item.status-attended {
+            background-color: rgba(22, 78, 99, 0.3);
+            border-color: rgba(6, 182, 212, 0.3);
+            color: #cffafe;
+            box-shadow: 0 0 15px rgba(6, 182, 212, 0.1);
+        }
+
+        .chapter-item.status-none {
+            background-color: rgba(30, 41, 59, 0.4);
+            border-color: rgba(51, 65, 85, 0.5);
+            color: #94a3b8;
+        }
+
+        .chapter-item.status-none:hover {
+            background-color: rgba(51, 65, 85, 0.5);
+            color: #e2e8f0;
+        }
+
+        .chapter-icon {
+            font-size: 0.75rem;
+            transition: color 0.3s;
+            flex-shrink: 0;
+        }
+
+        .icon-complete { color: #00ffb3; }
+        .icon-attended { color: #22d3ee; }
+        .icon-none { color: #64748b; }
+
+        .chapter-text {
+            overflow: hidden;
+            text-overflow: ellipsis;
+            white-space: nowrap;
+            width: 100%;
+        }
+
+        .chapter-text.font-medium {
+            font-weight: 500;
+        }
+
+        /* State Classes */
+        .subject-complete-red {
+            box-shadow: 0 0 30px rgba(239, 68, 68, 0.2);
+            border-color: rgba(239, 68, 68, 0.4) !important;
+        }
+
+        .subject-complete-blue {
+            box-shadow: 0 0 30px rgba(6, 182, 212, 0.15);
+            border-color: rgba(34, 211, 238, 0.3) !important;
         }
 
         /* Scrollbar Styling */
         ::-webkit-scrollbar {
-            width: 4px; /* Thinner scrollbar */
+            width: 4px;
         }
         ::-webkit-scrollbar-track {
             background: rgba(0,0,0,0.1); 
@@ -46,10 +272,6 @@
         }
         ::-webkit-scrollbar-thumb:hover {
             background: rgba(56, 189, 248, 0.5); 
-        }
-
-        .chapter-item {
-            transition: all 0.3s ease;
         }
         
         /* Animation for moving items */
@@ -69,75 +291,69 @@
                 opacity: 1; 
             }
         }
-
-        .progress-bar-fill {
-            transition: width 0.6s cubic-bezier(0.4, 0, 0.2, 1);
-        }
     </style>
 </head>
-<body class="p-2 md:p-4 overflow-x-hidden">
+<body>
 
     <!-- Header -->
-    <header class="mb-4 text-center">
-        <h1 class="text-2xl md:text-3xl font-bold text-transparent bg-clip-text bg-gradient-to-r from-blue-400 to-cyan-300 tracking-tight mb-1">
+    <header>
+        <h1 class="main-title">
             Syllabus Tracker
         </h1>
-        <p class="text-slate-400 font-light text-xs">Click once for (Blue), twice for (Red)</p>
+        <p class="header-subtitle">Click once for (Blue), twice for (Red)</p>
     </header>
 
     <!-- Main Grid -->
-    <div id="tracker-container" class="grid grid-cols-1 md:grid-cols-2 xl:grid-cols-4 gap-3 max-w-[1920px] mx-auto h-[calc(100vh-100px)]">
+    <div id="tracker-container">
         <!-- Subjects will be injected here via JS -->
     </div>
 
     <!-- Template for Subject Column (Hidden) -->
     <template id="subject-template">
-        <div class="glass-panel rounded-xl p-3 flex flex-col h-full shadow-2xl shadow-black/40">
+        <div class="glass-panel">
             <!-- Subject Header -->
-            <div class="mb-3">
-                <div class="flex justify-between items-end mb-1">
-                    <h2 class="text-lg font-bold text-white subject-title">Subject Name</h2>
-                    <span class="text-[10px] font-mono text-cyan-400 subject-percent">0%</span>
+            <div class="subject-header-wrapper">
+                <div class="subject-header-top">
+                    <h2 class="subject-title">Subject Name</h2>
+                    <span class="subject-percent">0%</span>
                 </div>
                 <!-- Subject Progress Bar Container -->
-                <div class="w-full bg-slate-700/50 rounded-full h-1.5 overflow-hidden flex">
-                    <!-- Red Bar (Completed) -->
-                    <div class="subject-progress-red bg-red-500 h-1.5 progress-bar-fill" style="width: 0%"></div>
-                    <!-- Blue Bar (Attended) -->
-                    <div class="subject-progress-blue bg-cyan-400 h-1.5 progress-bar-fill" style="width: 0%"></div>
+                <div class="progress-bar-container-subject">
+                    <div class="subject-progress-red progress-bar-fill" style="width: 0%"></div>
+                    <div class="subject-progress-blue progress-bar-fill" style="width: 0%"></div>
                 </div>
             </div>
 
             <!-- Papers Container -->
-            <div class="papers-container flex-1 grid grid-cols-2 gap-2 h-full overflow-hidden">
+            <div class="papers-container">
                 <!-- Paper 1 -->
-                <div class="paper1-wrapper flex flex-col h-full overflow-hidden">
-                    <div class="mb-2">
-                        <h3 class="text-[10px] font-semibold text-slate-300 uppercase tracking-wider mb-0.5">
-                            Paper 1 <span class="paper1-count text-cyan-400 ml-0.5">(0%)</span>
+                <div class="paper1-wrapper paper-wrapper">
+                    <div class="paper-header-wrapper">
+                        <h3 class="paper-title">
+                            Paper 1 <span class="paper1-count paper-count">(0%)</span>
                         </h3>
-                        <div class="w-full bg-slate-700/30 rounded-full h-1 flex overflow-hidden">
-                            <div class="paper1-progress-red bg-red-500 h-1 progress-bar-fill" style="width: 0%"></div>
-                            <div class="paper1-progress-blue bg-cyan-500 h-1 progress-bar-fill" style="width: 0%"></div>
+                        <div class="progress-bar-container-paper">
+                            <div class="paper1-progress-red paper-progress-red progress-bar-fill" style="width: 0%"></div>
+                            <div class="paper1-progress-blue paper-progress-blue progress-bar-fill" style="width: 0%"></div>
                         </div>
                     </div>
-                    <div class="paper1-list glass-card rounded-lg p-1.5 flex-1 overflow-y-auto space-y-1.5">
+                    <div class="paper1-list glass-card">
                         <!-- Chapters go here -->
                     </div>
                 </div>
 
                 <!-- Paper 2 -->
-                <div class="paper2-wrapper flex flex-col h-full overflow-hidden">
-                    <div class="mb-2">
-                        <h3 class="text-[10px] font-semibold text-slate-300 uppercase tracking-wider mb-0.5">
-                            Paper 2 <span class="paper2-count text-cyan-400 ml-0.5">(0%)</span>
+                <div class="paper2-wrapper paper-wrapper">
+                    <div class="paper-header-wrapper">
+                        <h3 class="paper-title">
+                            Paper 2 <span class="paper2-count paper-count">(0%)</span>
                         </h3>
-                        <div class="w-full bg-slate-700/30 rounded-full h-1 flex overflow-hidden">
-                            <div class="paper2-progress-red bg-red-500 h-1 progress-bar-fill" style="width: 0%"></div>
-                            <div class="paper2-progress-blue bg-cyan-500 h-1 progress-bar-fill" style="width: 0%"></div>
+                        <div class="progress-bar-container-paper">
+                            <div class="paper2-progress-red paper-progress-red progress-bar-fill" style="width: 0%"></div>
+                            <div class="paper2-progress-blue paper-progress-blue progress-bar-fill" style="width: 0%"></div>
                         </div>
                     </div>
-                    <div class="paper2-list glass-card rounded-lg p-1.5 flex-1 overflow-y-auto space-y-1.5">
+                    <div class="paper2-list glass-card">
                         <!-- Chapters go here -->
                     </div>
                 </div>
@@ -266,7 +482,7 @@
 
         // --- APP STATE MANAGEMENT ---
 
-        const STORAGE_KEY = 'syllabus_tracker_v2'; // Changed key to reset old invalid state format safely
+        const STORAGE_KEY = 'syllabus_tracker_v2'; 
         
         function loadState() {
             const stored = localStorage.getItem(STORAGE_KEY);
@@ -350,30 +566,28 @@
                         const item = document.createElement('div');
                         const isJustClicked = clickedSubject === subject.name && clickedPaper === paperNum && clickedChapter === chapObj.name;
 
-                        let classes = `chapter-item cursor-pointer p-1.5 rounded-md text-xs border transition-all duration-300 flex items-center gap-2 select-none `;
-                        let iconClass = "far fa-circle";
+                        let classes = `chapter-item `;
+                        let iconClass = "far fa-circle icon-none";
                         
                         if (chapObj.status === STATUS_COMPLETE) {
-                            classes += 'bg-red-900/30 border-red-500/30 text-red-100 shadow-[0_0_15px_rgba(239,68,68,0.15)] ';
-                            iconClass = "fas fa-check-circle text-red-500";
+                            classes += 'status-complete ';
+                            iconClass = "fas fa-check-circle icon-complete";
                         } else if (chapObj.status === STATUS_ATTENDED) {
-                            classes += 'bg-cyan-900/30 border-cyan-500/30 text-cyan-100 shadow-[0_0_15px_rgba(6,182,212,0.1)] ';
-                            iconClass = "fas fa-check-circle text-cyan-400";
+                            classes += 'status-attended ';
+                            iconClass = "fas fa-check-circle icon-attended";
                         } else {
-                            classes += 'bg-slate-800/40 border-slate-700/50 text-slate-400 hover:bg-slate-700/50 hover:text-slate-200 ';
-                            iconClass = "far fa-circle text-slate-500";
+                            classes += 'status-none ';
                         }
 
                         if (isJustClicked) classes += 'just-moved ';
                         item.className = classes;
                         
                         const icon = document.createElement('i');
-                        icon.className = `${iconClass} text-xs transition-colors duration-300 flex-shrink-0`;
+                        icon.className = `chapter-icon ${iconClass}`;
                         
                         const text = document.createElement('span');
                         text.textContent = chapObj.name;
-                        text.className = "truncate w-full";
-                        if(chapObj.status !== STATUS_NONE) text.classList.add("font-medium");
+                        text.className = `chapter-text ${chapObj.status !== STATUS_NONE ? 'font-medium' : ''}`;
                         
                         item.appendChild(icon);
                         item.appendChild(text);
@@ -404,7 +618,6 @@
 
                 // Adjust grid column if only 1 paper exists (e.g. ICT)
                 if(subject.p2.length === 0) {
-                    clone.querySelector('.paper1-wrapper').classList.remove('col-span-1');
                     clone.querySelector('.paper1-wrapper').style.gridColumn = "span 2 / span 2";
                 }
 
@@ -425,11 +638,9 @@
                 if (displayPercent === 100) {
                     const card = clone.querySelector('.glass-panel');
                     if (totalSubjectComplete === totalSubjectTopics) {
-                        card.classList.add('shadow-[0_0_30px_rgba(239,68,68,0.2)]'); 
-                        card.style.borderColor = 'rgba(239, 68, 68, 0.4)';
+                        card.classList.add('subject-complete-red'); 
                     } else {
-                        card.classList.add('shadow-[0_0_30px_rgba(6,182,212,0.15)]'); 
-                        card.style.borderColor = 'rgba(34, 211, 238, 0.3)';
+                        card.classList.add('subject-complete-blue'); 
                     }
                 }
 
