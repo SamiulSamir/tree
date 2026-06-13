@@ -1,8 +1,5 @@
 {
   
-  {"deviceid":"alldevice","appaccess":"true","trackeraccess":"true","bannmessage":"none"}
-  {"deviceid":"c5c76ae58406d8e8","appaccess":"true","trackeraccess":"false","bannmessage":"none"}
-
-  
+  {"deviceid":"alldevice","appaccess":"true","trackeraccess":"false","bannmessage":"none"}
   
 }
