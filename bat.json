@@ -1,5 +1,6 @@
 {
   
-  {"deviceid":"alldevice","appaccess":"true","trackeraccess":"true","bannmessage":"Your Device is restricted"}
-  
+  {"deviceid":"alldevice","appaccess":"true","trackeraccess":"true","bannmessage":"Your Device is restricted"},
+  {"deviceid":"72b28671403c506f","appaccess":"false","trackeraccess":"false","bannmessage":"Your Device is restricted"}
+ 
 }
